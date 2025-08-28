@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stopwatch</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c2e9fb 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+    h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 2.8em;
+      color: #283747;
+      letter-spacing: 0.05em;
+      margin-bottom: 26px;
+      font-weight: 800;
+      user-select: none;
+    }
+    .stopwatch {
+      background: #ddeafd;
+      border-radius: 20px;
+      padding: 38px 30px 30px 30px;
+      box-shadow: 0 8px 32px #bbc8df55;
+      min-width: 310px;
+      text-align: center;
+      border: 1px solid #c2e9fb;
+    }
+    .display {
+      font-family: 'Fira Mono', monospace;
+      font-size: 2.5em;
+      color: #0a2540;
+      background: #fff;
+      padding: 12px 28px;
+      border-radius: 12px;
+      margin-bottom: 22px;
+      font-weight: 700;
+      box-shadow: 0 2px 12px #91bfe999;
+      letter-spacing: 0.04em;
+    }
+    .buttons button {
+      margin: 7px 11px;
+      padding: 10px 26px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1.07em;
+      font-weight: bold;
+      cursor: pointer;
+      color: #fff;
+      box-shadow: 0 2px 9px #bbc8df55;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .buttons button:nth-child(1){background: #89c2d9;}
+    .buttons button:nth-child(2){background: #f28482;}
+    .buttons button:nth-child(3){background: #f6bd60; color: #283747;}
+    .buttons button:nth-child(4){background: #6a994e;}
+    .buttons button:hover { opacity: 0.9; transform: scale(1.06);}
+    .laps {
+      margin-top: 22px;
+      text-align: left;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+    .laps li {
+      color: #283747;
+      background: #f5f7fa;
+      margin-bottom: 4px;
+      padding: 5px 6px;
+      border-radius: 4px;
+      font-family: 'Fira Mono', monospace;
+      font-size: 1em;
+    }
+  </style>
+</head>
+<body>
+  <h1>STOPWATCH</h1>
+  <div class="stopwatch">
+    <div class="display" id="display">00:00:00.00</div>
+    <div class="buttons">
+      <button onclick="startStopwatch()">Start</button>
+      <button onclick="pauseStopwatch()">Pause</button>
+      <button onclick="resetStopwatch()">Reset</button>
+      <button onclick="lapStopwatch()">Lap</button>
+    </div>
+    <ul class="laps" id="laps"></ul>
+  </div>
+  <script>
+    let [ms, s, m, h] = [0,0,0,0];
+    let timer = null, running = false;
+    function updateDisplay() {
+      let msStr = ms < 10 ? '0' + ms : ms;
+      let sStr = s < 10 ? '0' + s : s;
+      let mStr = m < 10 ? '0' + m : m;
+      let hStr = h < 10 ? '0' + h : h;
+      document.getElementById("display").innerText = `${hStr}:${mStr}:${sStr}.${msStr}`;
+    }
+    function runStopwatch() {
+      ms += 1;
+      if(ms === 100) { ms = 0; s += 1; }
+      if(s === 60) { s = 0; m += 1; }
+      if(m === 60) { m = 0; h += 1; }
+      updateDisplay();
+    }
+    function startStopwatch() {
+      if (!running) {
+        timer = setInterval(runStopwatch, 10);
+        running = true;
+      }
+    }
+    function pauseStopwatch() {
+      clearInterval(timer); running = false;
+    }
+    function resetStopwatch() {
+      clearInterval(timer);
+      [ms, s, m, h] = [0,0,0,0];
+      updateDisplay(); running = false;
+      document.getElementById("laps").innerHTML = "";
+    }
+    function lapStopwatch() {
+      if(running) {
+        const lapTime = document.getElementById("display").innerText;
+        const lapsElem = document.getElementById("laps");
+        const li = document.createElement("li");
+        li.innerText = "Lap: " + lapTime;
+        lapsElem.appendChild(li);
+      }
+    }
+    updateDisplay();
+  </script>
+</body>
+</html>
